@@ -1,8 +1,9 @@
-import express from "express";
+import dotenv from "dotenv";
+import app from "./app.js";
 
-const app = express();
+dotenv.config();
 
-const PATH = 3400;
+const PATH = process.env.PORT || 5000;
 
 app.listen(PATH, () => {
   console.log(`Server running on port ${PATH}`);
