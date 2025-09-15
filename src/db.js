@@ -1,5 +1,7 @@
 import { MongoClient } from "mongodb";
-const connectionString = process.env.ATLAS_URI || "";
+import { ATLAS_URI } from "./config.js";
+const connectionString = ATLAS_URI;
+
 const client = new MongoClient(connectionString);
 
 export default async function connectDB() {

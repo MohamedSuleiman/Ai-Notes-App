@@ -1,12 +1,11 @@
-import dotenv from "dotenv";
 import app from "./app.js";
+import connectDB from "./db.js";
+import { port } from "./config.js";
 
-dotenv.config();
+const PORT = port;
 
-const PATH = process.env.PORT || 5000;
-
-app.listen(PATH, () => {
-  console.log(`Server running on port ${PATH}`);
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
 
 app.get("/", (req, res) => {
@@ -15,4 +14,8 @@ app.get("/", (req, res) => {
     .send(
       `<style> body{background: blue;} </style><body><div>Welcome to the home page</div></body>`
     );
+});
+
+app.get("/register", (req, res) => {
+  res.send("<h1>HEI PÅ DEG</h1>");
 });
