@@ -1,14 +1,16 @@
 import express from "express";
-
+import { authenticateToken } from "../middleware/authmiddelware.js";
+import { getNotes, saveNote } from "../controllers/noteController.js";
+import User from "../models/user.js";
+import Note from "../models/note.js";
 const router = express.Router();
 
-router.get("/getnote/:id", (req, res) => {
-  res
-    .status(200)
-    .send(JSON.stringify({ text: "ndsjkfnjkdsf klndjksfnjksdfn " }));
-});
+router.use(authenticateToken);
 
-router.post("/createNote", (req, res) => {});
+router.get("/getNote/:id");
 
-router.get("/showAllNotes", (req, res) => {});
+router.post("/createNote", saveNote);
+
+router.post("/summarize", (req, res) => {});
+router.get("/notes", getNotes);
 export default router;
