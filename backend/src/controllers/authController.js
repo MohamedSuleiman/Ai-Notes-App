@@ -3,7 +3,6 @@ import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import User from "../models/user.js";
 import token from "../models/token.js";
-import user from "../models/user.js";
 dotenv.config();
 
 // can do better her i.e by splitting up the method and using SOLID principles,
@@ -28,7 +27,7 @@ export async function login(req, res) {
     }
 
     const payload = { sub: user._id };
-    const token = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {
+    const accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {
       expiresIn: "10m",
     });
     const refreshToken = jwt.sign(
@@ -42,7 +41,7 @@ export async function login(req, res) {
     const saveRefreshToken = new token({
       refreshToken: hashedToken,
       user: user._id,
-      expiresAt: Date.now() + sevenDays,
+      expiresAt: new Date(Date.now() + sevenDays),
     });
     await saveRefreshToken.save();
 
@@ -52,7 +51,7 @@ export async function login(req, res) {
       path: "/refresh",
     });
 
-    res.status(200).json({ accessToken: token });
+    res.status(200).json({ accessToken });
   } catch (e) {
     res.status(500).json({ errorMessage: "Server error" });
   }
@@ -74,6 +73,7 @@ export async function signup(req, res) {
 
     await newUser.save();
     console.log(`Saved a new user: `);
+    return res.status(200).json({ message: "Registerd new user" });
   } catch (err) {
     console.error(err);
   }

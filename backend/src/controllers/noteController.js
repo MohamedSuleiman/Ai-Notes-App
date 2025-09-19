@@ -1,16 +1,26 @@
-import Note from "../models/user.js";
+import Note from "../models/note.js";
+import User from "../models/user.js";
 export async function getNotes(req, res) {
-  const id = req.user.sub;
-  const notes = await Note.find({ user: id });
-  res.status(200).json({ notes: notes });
+  try {
+    const id = req.user.sub;
+    const notes = await Note.find({ user: id });
+    if (notes.length === 0) {
+      {
+        return res.status(200).json({ message: "You have 0 notes saved!" });
+      }
+    }
+    return res.status(200).json({ notes: notes });
+  } catch (err) {
+    console.log(err);
+  }
 }
 
-export default async function saveNote(req, res) {
+export async function saveNote(req, res) {
   try {
     const id = req.user.sub;
     const user = await User.findOne({ _id: id });
     const userContent = req.body.content;
-    if (!content) {
+    if (!userContent) {
       return res
         .status(400)
         .json({ errorMessage: "Note content cannot be empty." });

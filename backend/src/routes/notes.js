@@ -7,7 +7,7 @@ const router = express.Router();
 
 router.use(authenticateToken);
 
-router.get("/getNote/:id");
+router.get("/getNote/:id", (req, res) => {});
 
 router.post("/createNote", saveNote);
 

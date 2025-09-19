@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 const tokenSchema = new mongoose.Schema(
   {
     refreshToken: {
+      type: String,
       required: true,
       unique: true,
     },
@@ -10,8 +11,8 @@ const tokenSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     },
-    expiresAT: {
-      type: date,
+    expiresAt: {
+      type: Date,
       required: true,
     },
   },

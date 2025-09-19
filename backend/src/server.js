@@ -3,7 +3,6 @@ import connectDB from "./db.js";
 import { PORT } from "./config.js";
 import authRouter from "./routes/auth.js";
 import notesRouter from "./routes/notes.js";
-import aiRouter from "./routes/ai.js";
 import cors from "cors";
 
 const app = express();
@@ -20,7 +19,6 @@ connectDB();
 app.use(express.json());
 app.use("/", authRouter);
 app.use("/api", notesRouter);
-app.use("/api", aiRouter);
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
