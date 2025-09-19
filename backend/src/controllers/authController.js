@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import User from "../models/user.js";
 import token from "../models/token.js";
+import user from "../models/user.js";
 dotenv.config();
 
 // can do better her i.e by splitting up the method and using SOLID principles,
@@ -57,7 +58,26 @@ export async function login(req, res) {
   }
 }
 
-export async function signup(req, res) {}
+export async function signup(req, res) {
+  try {
+    const { username, password } = req.body;
+    const user = await User.findOne({ username: username });
+    if (user) {
+      return res.status(409).json({ errorMessage: "Username in use" });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newUser = new User({
+      username: username,
+      hashedPassword: hashedPassword,
+    });
+
+    await newUser.save();
+    console.log(`Saved a new user: `);
+  } catch (err) {
+    console.error(err);
+  }
+}
 
 export async function refreshToken(req, res) {
   const refreshToken = req.body.refreshToken;
