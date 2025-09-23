@@ -11,6 +11,5 @@ router.get("/getNote/:id", (req, res) => {});
 
 router.post("/createNote", saveNote);
 
-router.post("/summarize", (req, res) => {});
 router.get("/notes", getNotes);
 export default router;
