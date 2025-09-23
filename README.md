@@ -24,8 +24,6 @@ A note-taking web application with user authentication. Built with React, Node.j
 ---
 
 ## Demo
-
-- **Live Demo:** [https://your-app-domain.com](https://your-app-domain.com)
-- **Demo Video:** [https://youtu.be/your-demo-link](https://youtu.be/your-demo-link)
+- **Demo Video:** [https://youtu.be/O8t_0og8wb8](https://youtu.be/O8t_0og8wb8)
 
 ---
