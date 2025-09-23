@@ -6,8 +6,9 @@ export default function LogForm() {
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
-  const [successMessage, setSuccessMessage] = useState("");
+  const [errors, setErrors] = useState({});
+  const [generalMessage, setGeneralMessage] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const strongPasswordRegex =
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
@@ -15,29 +16,32 @@ export default function LogForm() {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    setErrorMessage("");
-    setSuccessMessage("");
+    setErrors({});
+    setGeneralMessage("");
 
-    if (!strongPasswordRegex.test(password)) {
-      setErrorMessage(
-        "Password must be at least 8 characters long and include uppercase, lowercase, number, and special character."
-      );
-      return;
-    }
+    let newErrors = {};
 
     if (!username) {
-      setErrorMessage("Username is required.");
-      return;
+      newErrors.username = "Username is required.";
+    } else if (!usernameRegex.test(username)) {
+      newErrors.username =
+        "3–20 characters, only letters, numbers, underscores, or dashes.";
     }
 
-    if (!usernameRegex.test(username)) {
-      setErrorMessage(
-        "Username must be 3-20 characters and contain only letters, numbers, underscores, or dashes (no spaces)."
-      );
+    if (!password) {
+      newErrors.password = "Password is required.";
+    } else if (!strongPasswordRegex.test(password)) {
+      newErrors.password =
+        "Must be 8+ chars with uppercase, lowercase, number, and special character.";
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
       return;
     }
 
     try {
+      setLoading(true);
       const response = await fetch("http://localhost:3400/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -47,15 +51,20 @@ export default function LogForm() {
       const data = await response.json();
 
       if (!response.ok) {
-        setErrorMessage(data.errorMessage || "Login failed");
+        setGeneralMessage(data.errorMessage || "Invalid username or password.");
       } else {
-        setSuccessMessage("Login successful!");
+        setGeneralMessage("✅ Login successful! Redirecting...");
         localStorage.setItem("accessToken", data.accessToken);
-        navigate("/notes");
+
+        setTimeout(() => {
+          navigate("/notes");
+        }, 1200);
       }
     } catch (error) {
-      setErrorMessage("Network error. Please try again.");
-      console.log(error);
+      setGeneralMessage("⚠️ Network error. Please try again.");
+      console.error(error);
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -65,36 +74,50 @@ export default function LogForm() {
       <form className="login-container" onSubmit={handleSubmit}>
         <div style={{ marginBottom: "12px" }}>
           <label htmlFor="username">Username:</label>
-          <br />
           <input
             id="username"
             name="username"
             type="text"
             required
+            className={errors.username ? "input-error" : ""}
             value={username}
             onChange={(e) => setUsername(e.target.value)}
           />
+          {errors.username && (
+            <p style={{ color: "red", fontSize: "0.9em" }}>{errors.username}</p>
+          )}
         </div>
+
         <div style={{ marginBottom: "12px" }}>
           <label htmlFor="password">Password:</label>
-          <br />
           <input
             id="password"
             name="password"
             type="password"
             required
+            className={errors.password ? "input-error" : ""}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
+          {errors.password && (
+            <p style={{ color: "red", fontSize: "0.9em" }}>{errors.password}</p>
+          )}
         </div>
-        <button type="submit">Login</button>
+
+        <button type="submit" disabled={loading}>
+          {loading ? "Logging in..." : "Login"}
+        </button>
       </form>
 
-      {errorMessage && (
-        <p style={{ color: "red", marginTop: "10px" }}>{errorMessage}</p>
-      )}
-      {successMessage && (
-        <p style={{ color: "green", marginTop: "10px" }}>{successMessage}</p>
+      {generalMessage && (
+        <p
+          style={{
+            color: generalMessage.includes("success") ? "green" : "red",
+            marginTop: "10px",
+          }}
+        >
+          {generalMessage}
+        </p>
       )}
 
       <p style={{ marginTop: "20px" }}>
