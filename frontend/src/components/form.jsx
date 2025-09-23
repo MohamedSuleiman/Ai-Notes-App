@@ -25,7 +25,7 @@ export default function LogForm() {
       newErrors.username = "Username is required.";
     } else if (!usernameRegex.test(username)) {
       newErrors.username =
-        "3–20 characters, only letters, numbers, underscores, or dashes.";
+        "3-20 characters, only letters, numbers, underscores, or dashes.";
     }
 
     if (!password) {
